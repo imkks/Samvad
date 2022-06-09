@@ -15,7 +15,7 @@ export const SocketProvider=({id,children})=>
     
     
     useEffect(() => {
-        const newSocket=io('http://localhost:4000',{ transports : ['websocket'],query:{userId:id}});
+        const newSocket=io('https://addr-resolver.herokuapp.com/',{ transports : ['websocket'],query:{userId:id}});
         setSocket(newSocket);
         return () => {
             newSocket.close()

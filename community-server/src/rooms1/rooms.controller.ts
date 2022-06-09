@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, Req } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { addUserDto } from './dto/add-user-dto';
 import { AuthGuard } from 'src/authentication/authguard';
+import { RequestWithUser } from 'src/authentication/request.interface';
 
 @Controller('rooms')
 export class RoomsController {
@@ -11,25 +11,25 @@ export class RoomsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  create(@Body() createRoomDto: CreateRoomDto,@Request() request) {
-    // console.log(request.query);
+  create(@Body() createRoomDto: CreateRoomDto,@Request() request:RequestWithUser) {
+    
     return this.roomsService.create(createRoomDto,request.user.email);
   }
   @Post('/add')
   @UseGuards(AuthGuard)
-  addUsersToRoom(@Body()adduserdto:addUserDto,@Request()request)
+  addUsersToRoom(@Body('userId')userId,@Body('roomId')roomId)
   {
-      return this.roomsService.addUsersToRoom(adduserdto.userIds,adduserdto.roomId,request.user.email);
+      return this.roomsService.addUsersToRoom(userId,roomId);
   }
   @Get()
   @UseGuards(AuthGuard)
-  find(@Request() req) {
-    return this.roomsService.findRoomByUsers(req.user.email);
+  find(@Req()request:RequestWithUser) {
+    return this.roomsService.findRoomByUsers(request.user.email);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.roomsService.findOne(id);
+    return this.roomsService.findOne(+id);
   }
 
   @Patch(':id')

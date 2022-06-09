@@ -16,6 +16,6 @@ export class Room_User
         @ManyToOne(()=>Room,room=>room.roomUsers)
         room:Room
         
-        @ManyToOne(()=>User,user=>user.userRooms)
-        user:User
+        // @ManyToOne(()=>User,user=>user.userRooms)
+        // user:User
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomsService } from 'src/rooms/rooms.service';
 import { getConnection, Repository } from 'typeorm';
@@ -13,24 +13,38 @@ export class UsersService {
     private usersRepository:Repository<User>,private readonly roomsService:RoomsService
   ){}
  async create(createUserDto: CreateUserDto) {
-    // const newUser=new User();
-    // newUser.name=createUserDto.name
-    let user= await this.usersRepository.save(createUserDto);
-    // await this.roomsService.create({name:user.name,description:'pvt chat',isPrivateRoom:true,id:user.id},user.id)
+  //  Logger.debug(createUserDto)
+    const newUser=this.usersRepository.create(createUserDto);
+    // newUser.name=createUserDto.namec
+    let user= await this.usersRepository.save(newUser);
+    
     return user;
-    // return await getConnection().createQueryBuilder().insert().into(User,["name"]).values({name:createUserDto.name}).execute();
   }
 
-  async findUsersByRoom(id) {
-    // return await this.usersRepository.find({relations:["userRooms"],where:{userRooms:{roomId:id}}});
-    return await getConnection().createQueryBuilder(User,'user').leftJoinAndSelect("user.userRooms","userrooms").where("userrooms.roomId=:id",{id}).getMany();
+  // async findUsersByRoom(id) {
+  //   // return await this.usersRepository.find({relations:["userRooms"],where:{userRooms:{roomId:id}}});
+  //   return await getConnection().createQueryBuilder(User,'user').leftJoinAndSelect("user.userRooms","userrooms").where("userrooms.roomId=:id",{id}).getMany();
+  // }
+  async setRefreshToken(refreshToken,user:User)
+  { 
+    
+      user.refreshToken=refreshToken;
+      return await this.usersRepository.save(user);
   }
   async findAll()
   {
     return await this.usersRepository.find();
   }
- async findOne(id: number) {
-    return await this.usersRepository.findOne(id);
+ async findOne(email: string) {
+   try {
+    const user=await this.usersRepository.find({email:email});
+    return user[0];
+
+     
+   } catch (error) {
+     Logger.error(error)
+     
+   }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

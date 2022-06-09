@@ -1,19 +1,18 @@
-
-import { MutableBase } from "src/Entity/base.entity";
+import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { RoomUser } from "./roomuser.entity";
+import { Room_User } from "./room_user.entity";
 
 @Entity()
-export class Room extends MutableBase {
+export class Room {
     @PrimaryGeneratedColumn('uuid')
     id:string;
     @Column()
     name:string;
     @Column()
     description:string;
-    @OneToMany(()=>RoomUser,roomuser=>roomuser.room,{eager:true})
+    @OneToMany(()=>Room_User,roomuser=>roomuser.room,{eager:true})
     @JoinTable()
-    roomUsers:RoomUser[];
- 
+    roomUsers:Room_User[];
+
     
 }
